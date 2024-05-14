@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  adminer:
+    extends:
+      file: ./bdd/docker-compose.db.yml  # Inclut les services de docker-compose.db.yml
+      service: adminer
+    depends_on:
+      - postgres
+    ports:
+      - 81:80
+    networks:
+      - net-backend
+
+  postgres:
+    extends:
+      file: ./bdd/docker-compose.db.yml  # Inclut les services de docker-compose.db.yml
+      service: postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./database:/var/lib/postgresql/data
+    networks:
+      - net-backend
+
+  nginx:
+    extends:
+      file: ./web/docker-compose.web.yml  # Inclut les services de docker-compose.web.yml
+      service: nginx
+    ports:
+      - 8080:80
+    networks:
+      - net-frontend
+
+  php:
+    extends:
+      file: ./web/docker-compose.web.yml  # Inclut les services de docker-compose.web.yml
+      service: php
+    networks:
+      - net-frontend
+      - net-backend
+
+  composer:
+    extends:
+      file: ./web/docker-compose.web.yml  # Inclut les services de docker-compose.web.yml
+      service: composer
+
+networks:
+  net-backend:
+    name: back-db
+
+  net-frontend:
+    name: front-web
