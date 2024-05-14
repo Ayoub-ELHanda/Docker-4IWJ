@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  adminer:      # build ok
+    image: vr/adminer-custom:2.0.1
+    container_name: adminer
+    depends_on:
+      - postgres
+    ports:
+      - 81:80
+    networks:
+      - net-backend
+
+  postgres:     # build ok
+    image: vr/pgsql-custom:1.0.5
+    container_name: postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./database:/var/lib/postgresql/data
+    networks:
+      - net-backend
+
+networks:
+  net-backend:
+    name: back-db
